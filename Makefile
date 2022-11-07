@@ -1,0 +1,3 @@
+all:
+	idf.py build
+
