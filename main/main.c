@@ -15,6 +15,7 @@
 #include "ssd1306.h"
 #include "iot_button.h"
 #include "math.h"
+#include "stdint.h"
 
 #define LOG_LOCAL_LEVEL ESP_LOG_DEBUG
 
@@ -32,6 +33,8 @@
 #define SPI_DMA 0
 #define MAX_BUFFER_SIZE 32
 #define SPI_QUEUE_SIZE 10
+
+#define WORD_SIZE 16
 
 #define I2C_MASTER_SCL_IO 4        /*!< gpio number for I2C master clock */
 #define I2C_MASTER_SDA_IO 0        /*!< gpio number for I2C master data  */
@@ -92,8 +95,8 @@ void init_spi() {
 		.address_bits = 0,
 		.dummy_bits = 0,
 		.duty_cycle_pos = 128,
-		.cs_ena_pretrans = 0,
-		.cs_ena_posttrans = 0, // Keep the CS low 3 cycles after transaction, to stop the master from missing the last bit when CS has less propagation delay than CLK
+		.cs_ena_pretrans = 3,
+		.cs_ena_posttrans = 3, // Keep the CS low 3 cycles after transaction, to stop the master from missing the last bit when CS has less propagation delay than CLK
 		.clock_speed_hz = SPI_CLOCK,
 		.mode = SPI_MODE,
 		.spics_io_num = PIN_NUM_CS,
@@ -119,15 +122,26 @@ void init_spi() {
 
 }
 
+uint16_t sw_u16_bytes(uint16_t num){
+	// Switch bytes in uint16_t
+	return (((num & 0xff) << 8) | (num & 0xff00) >> 8);
+}
+
 // Full buffer DMA transfer
 int32_t spi_trans(uint16_t *tx_data, uint16_t *rx_data, uint16_t tx_len, uint16_t rx_len) {
 	// Prepare transaction parameters
-	memcpy(tx_buffer, tx_data, tx_len * sizeof(uint16_t));	
+	memcpy(tx_buffer, tx_data, tx_len * sizeof(uint16_t));
+	
+	// Fix data
+	for(int i = 0; i < tx_len; i++){
+		tx_buffer[i] = sw_u16_bytes(tx_buffer[i]);
+	}
+
 	spi_transaction_t trans = {
 		.rx_buffer = (uint8_t*)rx_buffer,
 		.tx_buffer = (uint8_t*)tx_buffer,
-		.rxlength = 8 * sizeof(uint16_t) * rx_len,
-		.length = 8 * sizeof(uint16_t) * tx_len,
+		.rxlength = 0, // 0 defaults to length in full-duplex mode
+		.length = WORD_SIZE * tx_len,
 		.flags = 0,
 		.cmd = 0,
 		.addr = 0,
@@ -136,6 +150,12 @@ int32_t spi_trans(uint16_t *tx_data, uint16_t *rx_data, uint16_t tx_len, uint16_
 
 	// Perform transaction
 	esp_err_t res = spi_device_transmit(spi_handle, &trans);
+
+	// Fix recieved data
+	for(int i = 0; i < rx_len; i++){
+		rx_buffer[i] = sw_u16_bytes(rx_buffer[i]);
+	}
+	
 	memcpy(rx_data, rx_buffer, rx_len * sizeof(uint16_t));
 	return res;
 }
@@ -238,6 +258,9 @@ button_m_event_t gather_button_events(void){
 	return ret;
 }
 
+#define DIGIT_MIN 0
+#define DIGIT_MAX 4
+
 typedef enum screens {
 	SEND_INT,
 } screens_t;
@@ -247,6 +270,7 @@ typedef struct _screen1 {
 	int8_t current_digit;
 	uint16_t recieved_num;
 	bool send_number;
+	bool allow_send;
 } screen1_t;
 
 typedef struct _program_state {
@@ -288,9 +312,11 @@ void handle_button_press(button_m_event_t evt){
 
 	switch(evt.button_number){
 		case BTN_UP: {
-			// TODO: Prevent overflow
 			ESP_LOGI(tag, "Up button pressed!");
-			state.scrn1->int_val+= pow(10, state.scrn1->current_digit);
+			uint32_t temp = state.scrn1->int_val + pow(10, state.scrn1->current_digit);
+			if(temp < UINT16_MAX){
+				state.scrn1->int_val += pow(10, state.scrn1->current_digit);
+			}
 			break;
 		}
 		case BTN_DOWN: {
@@ -302,19 +328,26 @@ void handle_button_press(button_m_event_t evt){
 			break;
 		}
 		case BTN_LEFT: {
-			// TODO: Set limits
 			ESP_LOGI(tag, "Left button pressed!");
-			state.scrn1->current_digit++;
+			if(state.scrn1->current_digit < DIGIT_MAX){
+				state.scrn1->current_digit++;
+			}
 			break;
 		}
 		case BTN_RIGHT: {
 			ESP_LOGI(tag, "Right button pressed!");
-			state.scrn1->current_digit--;
+			if(state.scrn1->current_digit > DIGIT_MIN){
+				state.scrn1->current_digit--;
+			}
 			break;
 		}
 		case BTN_MIDDLE: {		 
 			ESP_LOGI(tag, "Middle button pressed!");
-			// TODO: add state to enable sending
+			if(state.scrn1->allow_send){
+				state.scrn1->allow_send = false;
+			} else {
+				state.scrn1->allow_send = true;
+			}
 			break;
 		}
 		default: 
@@ -329,8 +362,14 @@ void handle_button_press(button_m_event_t evt){
 }
 
 void draw_screen1(void){
+    char allow_send_char;
+    if(state.scrn1->allow_send){
+	allow_send_char = '*';
+    } else {
+	allow_send_char = ' ';
+    }
     char data_str[4][17] = {0};
-    sprintf(&data_str[0][0], "Send integer[ ]");
+    sprintf(&data_str[0][0], "Send integer[%c]", allow_send_char);
     sprintf(&data_str[1][0], "%05d  %d", state.scrn1->int_val, state.scrn1->current_digit);
     sprintf(&data_str[2][0], "Recieved:");
     sprintf(&data_str[3][0], "%d ml:%d", state.scrn1->recieved_num, state.message_len);
@@ -350,24 +389,34 @@ void draw_screen1(void){
     ssd1306_refresh_gram(ssd1306_dev);
 }
 
+
+uint16_t get_message_len(){
+	uint16_t message_len = 0;
+	while(message_len < 1 || message_len > 16){
+	   // 	uint16_t broken_message_len;
+	    	uint16_t dummy_rx;
+	    	spi_trans(&dummy_rx, &message_len, 1, 1);
+	    	ESP_LOGI(tag, "Broken message len 0x%02X", message_len);
+	    //	message_len = sw_u16_bytes(broken_message_len);
+	    //	ESP_LOGI(tag, "Recieved message length: %d 0x%02X", message_len, message_len);
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+	}
+	return message_len;
+}
+
 void app_main(void)
 {
+    uint32_t counter = 0;
+    uint16_t rx_num[3] = {0};
+    uint16_t tx_num[3] = {0}; 
+    
     init_program_state();
     init_console();
     init_spi();
     init_lcd();
     init_buttons();
 
-    uint32_t counter = 0;
-    uint16_t broken_message_len;
-    uint16_t dummy_rx;
-    spi_trans(&dummy_rx, &broken_message_len, 1, 1);
-    ESP_LOGI(tag, "Broken message len 0x%02X", broken_message_len);
-    state.message_len = broken_message_len >> 8;
-    ESP_LOGI(tag, "Recieved message length: %d 0x%02X", state.message_len, state.message_len);
-
-    uint16_t rx_num[3] = {0};
-    uint16_t tx_num[3] = {0}; 
+    state.message_len = get_message_len();
     
     while (1) {
 	counter++;
@@ -382,7 +431,6 @@ void app_main(void)
 	//ESP_LOGI(tag, "Recieved: 0x%02X 0x%02X 0x%02X",
 	//		rx_num[0], rx_num[1], rx_num[2]);
 	//ESP_LOGI(tag, "Queued successfully %d, Transmitted successfully %d", transaction_queued, transmitted);
-	// TODO: Fix extra byte in recieved numbers	
 	state.scrn1->recieved_num = rx_num[2];
 
 	if((counter % 3000000) == 0){
