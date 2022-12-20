@@ -1,17 +1,12 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "driver/spi_common.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
 #include "hal/spi_types.h"
 #include "sdkconfig.h"
-#include "driver/spi_slave.h"
 #include "driver/spi_master.h"
 #include "string.h"
-#include "esp_console.h"
-#include "argtable3/argtable3.h"
-#include "cmd_system.h"
 #include "ssd1306.h"
 #include "iot_button.h"
 #include "math.h"
@@ -105,7 +100,7 @@ void init_spi() {
 		.pre_cb = call_matcher_after_queueing,
 		.post_cb = call_matcher_after_transmission,
 	};
-	
+
     	ESP_LOGI(tag, "Setting SPI CLOCK : %d Hz", SPI_CLOCK);
 	// Initialize and enable SPI
 	esp_err_t err = spi_bus_initialize(SPI_CHANNEL, &buscfg, 1);
@@ -131,7 +126,7 @@ uint16_t sw_u16_bytes(uint16_t num){
 int32_t spi_trans(uint16_t *tx_data, uint16_t *rx_data, uint16_t tx_len, uint16_t rx_len) {
 	// Prepare transaction parameters
 	memcpy(tx_buffer, tx_data, tx_len * sizeof(uint16_t));
-	
+
 	// Fix data
 	for(int i = 0; i < tx_len; i++){
 		tx_buffer[i] = sw_u16_bytes(tx_buffer[i]);
@@ -155,22 +150,9 @@ int32_t spi_trans(uint16_t *tx_data, uint16_t *rx_data, uint16_t tx_len, uint16_
 	for(int i = 0; i < rx_len; i++){
 		rx_buffer[i] = sw_u16_bytes(rx_buffer[i]);
 	}
-	
+
 	memcpy(rx_data, rx_buffer, rx_len * sizeof(uint16_t));
 	return res;
-}
-
-void init_console(){
-    esp_console_repl_t *repl = NULL;
-    esp_console_repl_config_t repl_config = ESP_CONSOLE_REPL_CONFIG_DEFAULT();
-    repl_config.prompt = ">";
-
-    esp_console_dev_uart_config_t uart_config = ESP_CONSOLE_DEV_UART_CONFIG_DEFAULT();
-    ESP_ERROR_CHECK(esp_console_new_repl_uart(&uart_config, &repl_config, &repl));
-
-    /* Register commands */
-    esp_console_register_help_command();
-    ESP_ERROR_CHECK(esp_console_start_repl(repl));
 }
 
 void init_lcd(){
@@ -215,7 +197,7 @@ void init_buttons(void){
 		};
 
 		gpio_btn[i] = iot_button_create(&gpio_btn_cfg);
-		
+
 		if(NULL == gpio_btn[i]) {
 		    ESP_LOGE(tag, "Button %d create failed", i);
 		}
@@ -251,7 +233,7 @@ button_m_event_t gather_button_events(void){
 	if(number_of_events == 1){
 		// ESP_LOGI(tag, "Got valid button event %d on btn %d!", ret.btn_evt, ret.button_number);
 		ret.is_valid = true;
-		return ret; 
+		return ret;
 	}
 	// ESP_LOGI(tag, "Got %d button events", number_of_events);
 	ret.btn_evt = false;
@@ -269,6 +251,7 @@ typedef struct _screen1 {
 	uint16_t int_val;
 	int8_t current_digit;
 	uint16_t recieved_num;
+	char recieved_char[3];
 	bool send_number;
 	bool allow_send;
 } screen1_t;
@@ -302,7 +285,7 @@ void handle_button_press(button_m_event_t evt){
 	}
 	// Ignore multiple key press events that happen during one actual key press
 	if(is_done){
-		return;	
+		return;
 	}
 	is_done = true;
 
@@ -341,7 +324,7 @@ void handle_button_press(button_m_event_t evt){
 			}
 			break;
 		}
-		case BTN_MIDDLE: {		 
+		case BTN_MIDDLE: {
 			ESP_LOGI(tag, "Middle button pressed!");
 			if(state.scrn1->allow_send){
 				state.scrn1->allow_send = false;
@@ -350,13 +333,13 @@ void handle_button_press(button_m_event_t evt){
 			}
 			break;
 		}
-		default: 
-		{	
+		default:
+		{
 			ESP_LOGE(tag, "Invalid Button number %d!", evt.button_number);
 			break;
 		}
 	}
-	
+
 	draw_screen1();
 
 }
@@ -370,14 +353,14 @@ void draw_screen1(void){
     }
     char data_str[4][17] = {0};
     sprintf(&data_str[0][0], "Send integer[%c]", allow_send_char);
-    sprintf(&data_str[1][0], "%05d  %d", state.scrn1->int_val, state.scrn1->current_digit);
-    sprintf(&data_str[2][0], "Recieved:");
-    sprintf(&data_str[3][0], "%d ml:%d", state.scrn1->recieved_num, state.message_len);
+    sprintf(&data_str[1][0], "%05d", state.scrn1->int_val);
+    sprintf(&data_str[2][0], "Recieved[%d]:", state.message_len);
+    sprintf(&data_str[3][0], "%c %d%c%c", state.scrn1->recieved_char[0], state.scrn1->recieved_num, state.scrn1->recieved_char[1], state.scrn1->recieved_char[2]);
     ssd1306_draw_string(ssd1306_dev, 0, 0, (const uint8_t *)&data_str[0][0], 16, 1);
     ssd1306_draw_string(ssd1306_dev, 0, 16, (const uint8_t *)&data_str[1][0], 16, 1);
     ssd1306_draw_string(ssd1306_dev, 0, 32, (const uint8_t *)&data_str[2][0], 16, 1);
     ssd1306_draw_string(ssd1306_dev, 0, 48, (const uint8_t *)&data_str[3][0], 16, 1);
-    
+
     // Draw cursor
     uint8_t xpos1 = 32 - (8 * state.scrn1->current_digit);
     uint8_t ypos1 = 33;
@@ -385,7 +368,7 @@ void draw_screen1(void){
     uint8_t ypos2 = ypos1;
     uint8_t dot = 1;
     ssd1306_fill_rectangle(ssd1306_dev, xpos1, ypos1, xpos2, ypos2, dot);
-    
+
     ssd1306_refresh_gram(ssd1306_dev);
 }
 
@@ -407,31 +390,35 @@ uint16_t get_message_len(){
 void app_main(void)
 {
     uint32_t counter = 0;
-    uint16_t rx_num[3] = {0};
-    uint16_t tx_num[3] = {0}; 
-    
+    uint16_t rx_num[5] = {0};
+    uint16_t tx_num[5] = {0};
+
     init_program_state();
-    init_console();
     init_spi();
     init_lcd();
     init_buttons();
 
     state.message_len = get_message_len();
-    
+
     while (1) {
 	counter++;
 	button_m_event_t evt = gather_button_events();
 	handle_button_press(evt);
-	
-
-        tx_num[2] = state.scrn1->int_val; 
-	//ESP_LOGI(tag, "Sending: 0x%02X 0x%02X 0x%02X", 
+	if(state.scrn1->allow_send){
+		tx_num[4] = state.scrn1->int_val;
+	} else {
+		tx_num[4] = 0;
+	}
+	//ESP_LOGI(tag, "Sending: 0x%02X 0x%02X 0x%02X",
 	//		tx_num[0], tx_num[1], tx_num[2]);
         spi_trans(tx_num, rx_num, state.message_len, state.message_len);
 	//ESP_LOGI(tag, "Recieved: 0x%02X 0x%02X 0x%02X",
 	//		rx_num[0], rx_num[1], rx_num[2]);
 	//ESP_LOGI(tag, "Queued successfully %d, Transmitted successfully %d", transaction_queued, transmitted);
+	state.scrn1->recieved_char[0] = rx_num[1];
 	state.scrn1->recieved_num = rx_num[2];
+	state.scrn1->recieved_char[1] = rx_num[3];
+	state.scrn1->recieved_char[2] = rx_num[4];
 
 	if((counter % 3000000) == 0){
 		// Yield for FREERTOS housekeeping
