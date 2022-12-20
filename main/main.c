@@ -11,9 +11,6 @@
 #include "iot_button.h"
 #include "math.h"
 #include "stdint.h"
-
-#define LOG_LOCAL_LEVEL ESP_LOG_DEBUG
-
 #include "esp_log.h"
 
 #define SPI_CLOCK 1000000
@@ -41,6 +38,51 @@
 #define PIN_BUT_3 7
 #define PIN_BUT_4 8
 #define PIN_BUT_5 9
+
+#define NUM_OF_BUTTONS 5
+
+#define DIGIT_MIN 0
+#define DIGIT_MAX 4
+
+typedef enum screens {
+    SEND_INT,
+} screens_t;
+
+typedef struct _screen1 {
+    uint16_t int_val;
+    int8_t current_digit;
+    uint16_t recieved_num;
+    char recieved_char[3];
+    bool send_number;
+    bool allow_send;
+} screen1_t;
+
+typedef struct _program_state {
+    screen1_t *scrn1;
+    uint16_t message_len;
+    screens_t current_screen;
+    bool button_handling_is_done;
+} program_state_t;
+
+typedef enum button_numbers {
+    BTN_UP,
+    BTN_DOWN,
+    BTN_LEFT,
+    BTN_RIGHT,
+    BTN_MIDDLE,
+} button_number_t;
+
+typedef struct {
+    button_event_t btn_evt;
+    button_number_t button_number;
+    bool is_valid;
+} button_m_event_t;
+
+static button_handle_t gpio_btn[NUM_OF_BUTTONS];
+static int32_t gpio_pin_nums[NUM_OF_BUTTONS] = {PIN_BUT_1, PIN_BUT_2, PIN_BUT_3, PIN_BUT_4, PIN_BUT_5};
+
+static screen1_t scrn1 = {0};
+static program_state_t state = {0};
 
 static const size_t max_buffer_size = MAX_BUFFER_SIZE;  // should set to the minimum transaction length
 static uint16_t *tx_buffer;
@@ -171,13 +213,7 @@ void init_lcd() {
     ssd1306_dev = ssd1306_create(I2C_MASTER_NUM, SSD1306_I2C_ADDRESS);
     ssd1306_refresh_gram(ssd1306_dev);
     ssd1306_clear_screen(ssd1306_dev, 0x00);
-
-    // This section will go in task
 }
-
-#define NUM_OF_BUTTONS 5
-button_handle_t gpio_btn[NUM_OF_BUTTONS];
-int32_t gpio_pin_nums[NUM_OF_BUTTONS] = {PIN_BUT_1, PIN_BUT_2, PIN_BUT_3, PIN_BUT_4, PIN_BUT_5};
 
 void init_buttons(void) {
     for (int i = 0; i < NUM_OF_BUTTONS; i++) {
@@ -198,26 +234,11 @@ void init_buttons(void) {
     }
 }
 
-typedef enum button_numbers {
-    BTN_UP,
-    BTN_DOWN,
-    BTN_LEFT,
-    BTN_RIGHT,
-    BTN_MIDDLE,
-} button_number_t;
-
-typedef struct {
-    button_event_t btn_evt;
-    button_number_t button_number;
-    bool is_valid;
-} button_m_event_t;
-
 button_m_event_t gather_button_events(void) {
     button_m_event_t ret = {0};
     int number_of_events = 0;
     for (int i = 0; i < NUM_OF_BUTTONS; i++) {
         button_event_t temp_button_evt = iot_button_get_event(gpio_btn[i]);
-        // ESP_LOGI(tag, "Button %d with evt type %d", ret.button_number, ret.btn_evt);
         if (temp_button_evt < BUTTON_EVENT_MAX) {
             ret.btn_evt = temp_button_evt;
             ret.button_number = i;
@@ -225,63 +246,34 @@ button_m_event_t gather_button_events(void) {
         }
     }
     if (number_of_events == 1) {
-        // ESP_LOGI(tag, "Got valid button event %d on btn %d!", ret.btn_evt, ret.button_number);
         ret.is_valid = true;
         return ret;
     }
-    // ESP_LOGI(tag, "Got %d button events", number_of_events);
     ret.btn_evt = false;
     return ret;
 }
 
-#define DIGIT_MIN 0
-#define DIGIT_MAX 4
-
-typedef enum screens {
-    SEND_INT,
-} screens_t;
-
-typedef struct _screen1 {
-    uint16_t int_val;
-    int8_t current_digit;
-    uint16_t recieved_num;
-    char recieved_char[3];
-    bool send_number;
-    bool allow_send;
-} screen1_t;
-
-typedef struct _program_state {
-    screen1_t *scrn1;
-    uint16_t message_len;
-    screens_t current_screen;
-} program_state_t;
-
-screen1_t scrn1 = {0};
-program_state_t state = {0};
-
 void init_program_state(void) {
     state.scrn1 = &scrn1;
     state.current_screen = SEND_INT;
+    state.button_handling_is_done = false;
 }
 
-bool is_done = false;
 void handle_button_press(button_m_event_t evt) {
-    // ESP_LOGI(tag, "button event: %d button number: %d is valid %d", evt.btn_evt, evt.button_number, evt.is_valid);
     if (evt.is_valid == false) {
-        // ESP_LOGI(tag, "Button press not valid..");
-        is_done = false;
+        state.button_handling_is_done = false;
         return;
     }
     // Onl accept single click events
     if (evt.btn_evt != BUTTON_SINGLE_CLICK) {
-        is_done = false;
+        state.button_handling_is_done = false;
         return;
     }
     // Ignore multiple key press events that happen during one actual key press
-    if (is_done) {
+    if (state.button_handling_is_done) {
         return;
     }
-    is_done = true;
+    state.button_handling_is_done = true;
 
     if (state.current_screen != SEND_INT) {
         return;
@@ -343,6 +335,8 @@ void draw_screen1(void) {
     } else {
         allow_send_char = ' ';
     }
+
+    // Draw text to screen in memory
     char data_str[4][17] = {0};
     sprintf(&data_str[0][0], "Send integer[%c]", allow_send_char);
     sprintf(&data_str[1][0], "%05d", state.scrn1->int_val);
@@ -354,7 +348,7 @@ void draw_screen1(void) {
     ssd1306_draw_string(ssd1306_dev, 0, 32, (const uint8_t *)&data_str[2][0], 16, 1);
     ssd1306_draw_string(ssd1306_dev, 0, 48, (const uint8_t *)&data_str[3][0], 16, 1);
 
-    // Draw cursor
+    // Draw cursor in memory
     uint8_t xpos1 = 32 - (8 * state.scrn1->current_digit);
     uint8_t ypos1 = 33;
     uint8_t xpos2 = xpos1 + 8;
@@ -368,12 +362,9 @@ void draw_screen1(void) {
 uint16_t get_message_len() {
     uint16_t message_len = 0;
     while (message_len < 1 || message_len > 16) {
-        // 	uint16_t broken_message_len;
         uint16_t dummy_rx;
         spi_trans(&dummy_rx, &message_len, 1, 1);
         ESP_LOGI(tag, "Broken message len 0x%02X", message_len);
-        //	message_len = sw_u16_bytes(broken_message_len);
-        //	ESP_LOGI(tag, "Recieved message length: %d 0x%02X", message_len, message_len);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
     return message_len;
@@ -395,17 +386,16 @@ void app_main(void) {
         counter++;
         button_m_event_t evt = gather_button_events();
         handle_button_press(evt);
+
         if (state.scrn1->allow_send) {
             tx_num[4] = state.scrn1->int_val;
         } else {
             tx_num[4] = 0;
         }
-        // ESP_LOGI(tag, "Sending: 0x%02X 0x%02X 0x%02X",
-        //		tx_num[0], tx_num[1], tx_num[2]);
+
         spi_trans(tx_num, rx_num, state.message_len, state.message_len);
-        // ESP_LOGI(tag, "Recieved: 0x%02X 0x%02X 0x%02X",
-        //		rx_num[0], rx_num[1], rx_num[2]);
-        // ESP_LOGI(tag, "Queued successfully %d, Transmitted successfully %d", transaction_queued, transmitted);
+
+        // Decode message
         state.scrn1->recieved_char[0] = rx_num[1];
         state.scrn1->recieved_num = rx_num[2];
         state.scrn1->recieved_char[1] = rx_num[3];
