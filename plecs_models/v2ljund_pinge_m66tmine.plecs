@@ -1,0 +1,793 @@
+Plecs {
+  Name          "v2ljund_pinge_m66tmine"
+  Version       "4.6"
+  CircuitModel  "ContStateSpace"
+  StartTime     "0.0"
+  TimeSpan      "1.0"
+  Timeout       ""
+  Solver        "auto"
+  MaxStep       "1e-3"
+  InitStep      "-1"
+  FixedStep     "1e-3"
+  Refine        "1"
+  ZCStepSize    "1e-9"
+  RelTol        "1e-3"
+  AbsTol        "-1"
+  TurnOnThreshold "0"
+  SyncFixedStepTasks "2"
+  UseSingleCommonBaseRate "2"
+  LossVariableLimitExceededMsg "3"
+  NegativeSwitchLossMsg "3"
+  DivisionByZeroMsg "3"
+  StiffnessDetectionMsg "2"
+  MaxConsecutiveZCs "1000"
+  AlgebraicLoopWithStateMachineMsg "3"
+  AssertionAction "1"
+  InitializationCommands ""
+  InitialState  "1"
+  SystemState   ""
+  TaskingMode   "1"
+  TaskConfigurations ""
+  CodeGenParameterInlining "2"
+  CodeGenFloatingPointFormat "2"
+  CodeGenAbsTimeUsageMsg "3"
+  CodeGenBaseName ""
+  CodeGenOutputDir ""
+  CodeGenExtraOpts ""
+  CodeGenTarget "PLECS RT Box 1"
+  CodeGenTargetSettings "AAAAfwAAAAAlUU1hcDxRU3RyaW5nLFFNYXA8UVN0cmluZyxRU3Rya"
+"W5nPiA+AAAAAAEAAAAcAFAATABFAEMAUwAgAFIAVAAgAEIAbwB4ACAAMQAAACAAAAAgAHgAYwBwAF"
+"MAbABhAHYAZQBJAGQAZQBuAHQAaQB0AHkAAAACADEAAAAQAHgAYwBwAFMAbABhAHYAZQAAAAAAAAA"
+"eAHMAeQBuAGMAaAByAG8AbgBpAHoAZQBUAGkAbQBlAAAAAgAwAAAAGABzAHQAYQByAHQAdQBwAFMA"
+"RgBQAF8ASAAAAAIAMAAAABgAcwB0AGEAcgB0AHUAcABTAEYAUABfAEcAAAACADAAAAAYAHMAdABhA"
+"HIAdAB1AHAAUwBGAFAAXwBGAAAAAgAwAAAAGABzAHQAYQByAHQAdQBwAFMARgBQAF8ARQAAAAIAMA"
+"AAABgAcwB0AGEAcgB0AHUAcABTAEYAUABfAEQAAAACADAAAAAYAHMAdABhAHIAdAB1AHAAUwBGAFA"
+"AXwBDAAAAAgAwAAAAGABzAHQAYQByAHQAdQBwAFMARgBQAF8AQgAAAAIAMAAAABgAcwB0AGEAcgB0"
+"AHUAcABTAEYAUABfAEEAAAACADAAAAAaAHMAYQBtAHAAbABpAG4AZwBEAGUAbABhAHkAAAACADAAA"
+"AAYAG0AYQB4AF8AbwB2AGUAcgByAHUAbgBzAAAAAgA1AAAAEgBtAGEAcwB0AGUAcgBTAEYAUAAAAA"
+"IAMQAAABIAZQBuAGEAYgBsAGUAWABDAFAAAAACADAAAAAkAGQAaQBnAGkAdABhAGwATwB1AHQAcAB"
+"1AHQATABlAHYAZQBsAAAAAgAxAAAAEABjAGEAbgAyAFQAeABSAHgAAAACADEAAAAeAGMAYQBuADIA"
+"VABlAHIAbQBpAG4AYQB0AGkAbwBuAAAAAgAyAAAAIgBjAGEAbgAyAFIAZQBjAG8AdgBlAHIAeQBEA"
+"GUAbABhAHkAAAACADAAAAAUAGMAYQBuADIARQBuAGEAYgBsAGUAAAACADAAAAAQAGMAYQBuADIAQg"
+"BhAHUAZAAAAAwANQAwADAAMAAwADAAAAAQAGMAYQBuADEAVAB4AFIAeAAAAAIAMQAAAB4AYwBhAG4"
+"AMQBUAGUAcgBtAGkAbgBhAHQAaQBvAG4AAAACADIAAAAiAGMAYQBuADEAUgBlAGMAbwB2AGUAcgB5"
+"AEQAZQBsAGEAeQAAAAIAMAAAABQAYwBhAG4AMQBFAG4AYQBiAGwAZQAAAAIAMAAAABAAYwBhAG4AM"
+"QBCAGEAdQBkAAAADAA1ADAAMAAwADAAMAAAABwAYQBuAGEAbABvAGcAUwBhAG0AcABsAGkAbgBnAA"
+"AAAgAxAAAAIgBhAG4AYQBsAG8AZwBPAHUAdABwAHUAdABSAGEAbgBnAGUAAAACADEAAAAgAGEAbgB"
+"hAGwAbwBnAEkAbgBwAHUAdABSAGEAbgBnAGUAAAACADEAAABKAFUAUwBFAF8ARABBAFQAQQBfAFQA"
+"WQBQAEUAUwBfAEYATwBSAF8AVABVAE4AQQBCAEwARQBfAFAAQQBSAEEATQBFAFQARQBSAFMAAAACA"
+"DEAAAAaAFQAQQBSAEcARQBUAF8ARABFAFYASQBDAEUAAAAwAHIAdABiAG8AeAAtADIAMABiADAAZg"
+"A3ADAAMwBlADkAMABjAC4AbABvAGMAYQBsAAAAGgBFAFgAVABFAFIATgBBAEwAXwBNAE8ARABFAAA"
+"AAgAx"
+  ExtendedMatrixPrecision "1"
+  MatrixSignificanceCheck "2"
+  EnableStateSpaceSplitting "2"
+  DisplayStateSpaceSplitting "1"
+  DiscretizationMethod "2"
+  ExternalModeSettings "AAAAfwAAAAAWUU1hcDxRU3RyaW5nLFFTdHJpbmc+AAAAAAcAAAAYAF"
+"QAcgBpAGcAZwBlAHIAVgBhAGwAdQBlAAAAAgAwAAAAGABUAHIAaQBnAGcAZQByAEQAZQBsAGEAeQA"
+"AAAIAMAAAABwAVAByAGkAZwBnAGUAcgBDAGgAYQBuAG4AZQBsAAAABAAtADEAAAAWAFMAZQBuAHMA"
+"aQB0AGkAdgBpAHQAeQAAAAIAMAAAABYAUgBlAGYAcgBlAHMAaABSAGEAdABlAAAABAAyADAAAAAUA"
+"E4AdQBtAFMAYQBtAHAAbABlAHMAAAAIADEAMAAwADAAAAAUAEQAZQBjAGkAbQBhAHQAaQBvAG4AAA"
+"ACADE="
+  AlgebraicLoopMethod "1"
+  AlgebraicLoopTolerance "1e-6"
+  ScriptsDialogGeometry ""
+  ScriptsDialogSplitterPos "0"
+  Terminal {
+    Type          Input
+    Index         "1"
+  }
+  Terminal {
+    Type          Output
+    Index         "1"
+  }
+  Terminal {
+    Type          Input
+    Index         "6"
+  }
+  Terminal {
+    Type          Input
+    Index         "5"
+  }
+  Terminal {
+    Type          Input
+    Index         "4"
+  }
+  Terminal {
+    Type          Output
+    Index         "5"
+  }
+  Terminal {
+    Type          Output
+    Index         "4"
+  }
+  Terminal {
+    Type          Output
+    Index         "3"
+  }
+  Terminal {
+    Type          Input
+    Index         "2"
+  }
+  Terminal {
+    Type          Input
+    Index         "3"
+  }
+  Terminal {
+    Type          Output
+    Index         "2"
+  }
+  Schematic {
+    Location      [0, 69; 1920, 1029]
+    ZoomFactor    1
+    SliderPosition [47, 90]
+    ShowBrowser   off
+    BrowserWidth  100
+    Component {
+      Type          Reference
+      SrcComponent  "PLECSRTBoxLib/SPI Slave"
+      Name          "SPI Slave"
+      Show          on
+      Position      [715, 385]
+      Direction     up
+      Flipped       off
+      Frame         [-25, -30; 25, 30]
+      LabelPosition [0, 33]
+      LabelAlign    up
+      Parameter {
+        Variable      "moduleID"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "fClock"
+        Value         "4e6"
+        Show          off
+      }
+      Parameter {
+        Variable      "spiMode"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "wordSize"
+        Value         "2"
+        Show          off
+      }
+      Parameter {
+        Variable      "bitOrder"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "useClockOutput"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "numChannels"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "numWords"
+        Value         "5"
+        Show          off
+      }
+      Parameter {
+        Variable      "sampleTime"
+        Value         "-1"
+        Show          off
+      }
+      Parameter {
+        Variable      "clkInChannel"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "csInChannel"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "dataInChannel"
+        Value         "[2]"
+        Show          off
+      }
+      Parameter {
+        Variable      "clkOutChannel"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "dataOutChannel"
+        Value         "[1]"
+        Show          off
+      }
+      Parameter {
+        Variable      "TargetPortIndices"
+        Value         "1 1 2 3 4 2 3 4 5"
+        Show          off
+      }
+      Terminal {
+        Type          Input
+        Position      [-25, 0]
+        Direction     left
+      }
+      Terminal {
+        Type          Output
+        Position      [29, 0]
+        Direction     right
+      }
+      Terminal {
+        Type          Input
+        Position      [-25, 10]
+        Direction     left
+      }
+      Terminal {
+        Type          Input
+        Position      [-25, 20]
+        Direction     left
+      }
+      Terminal {
+        Type          Input
+        Position      [-25, 30]
+        Direction     left
+      }
+      Terminal {
+        Type          Output
+        Position      [29, 10]
+        Direction     right
+      }
+      Terminal {
+        Type          Output
+        Position      [29, 20]
+        Direction     right
+      }
+      Terminal {
+        Type          Output
+        Position      [29, 30]
+        Direction     right
+      }
+      Terminal {
+        Type          Output
+        Position      [29, 20]
+        Direction     right
+      }
+    }
+    Component {
+      Type          Constant
+      Name          base64 "U8O1bnVtaSBwaWtrdXM="
+      Show          on
+      Position      [580, 305]
+      Direction     right
+      Flipped       off
+      Frame         [-10, -10; 10, 10]
+      LabelPosition [0, 13]
+      LabelAlign    up
+      Parameter {
+        Variable      "Value"
+        Value         "5"
+        Show          off
+      }
+      Parameter {
+        Variable      "DataType"
+        Value         "4"
+        Show          off
+      }
+    }
+    Component {
+      Type          SignalMux
+      Name          "Mux"
+      Show          off
+      Position      [640, 385]
+      Direction     right
+      Flipped       off
+      Parameter {
+        Variable      "Width"
+        Value         "5"
+        Show          off
+      }
+    }
+    Component {
+      Type          Constant
+      Name          "ASCII \"U\""
+      Show          on
+      Position      [580, 350]
+      Direction     right
+      Flipped       off
+      Frame         [-10, -10; 10, 10]
+      LabelPosition [0, 13]
+      LabelAlign    up
+      Parameter {
+        Variable      "Value"
+        Value         "85"
+        Show          off
+      }
+      Parameter {
+        Variable      "DataType"
+        Value         "4"
+        Show          off
+      }
+    }
+    Component {
+      Type          Constant
+      Name          "ASCII \"m\""
+      Show          on
+      Position      [580, 410]
+      Direction     right
+      Flipped       off
+      Frame         [-10, -10; 10, 10]
+      LabelPosition [0, 13]
+      LabelAlign    up
+      Parameter {
+        Variable      "Value"
+        Value         "109"
+        Show          off
+      }
+      Parameter {
+        Variable      "DataType"
+        Value         "4"
+        Show          off
+      }
+    }
+    Component {
+      Type          SignalDemux
+      Name          "Demux"
+      Show          off
+      Position      [780, 385]
+      Direction     right
+      Flipped       on
+      Parameter {
+        Variable      "Width"
+        Value         "5"
+        Show          off
+      }
+    }
+    Component {
+      Type          Reference
+      SrcComponent  "PLECSRTBoxLib/Analog In1"
+      Name          "Pinge analoogsisend"
+      Show          on
+      Position      [705, 475]
+      Direction     up
+      Flipped       off
+      Frame         [-25, -20; 25, 20]
+      LabelPosition [0, 23]
+      LabelAlign    up
+      Parameter {
+        Variable      "channel"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "scale"
+        Value         "(19.90/1.985)*1000"
+        Show          off
+      }
+      Parameter {
+        Variable      "offset"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "TargetPortIndices"
+        Value         "6"
+        Show          off
+      }
+      Terminal {
+        Type          Output
+        Position      [29, 0]
+        Direction     right
+      }
+    }
+    Component {
+      Type          Reference
+      SrcComponent  "PLECSRTBoxLib/PWM Out1"
+      Name          base64 "UFdNIHbDpGxqdW5k"
+      Show          on
+      Position      [1060, 385]
+      Direction     up
+      Flipped       off
+      Frame         [-25, -20; 25, 20]
+      LabelPosition [0, 23]
+      LabelAlign    up
+      Parameter {
+        Variable      "channel"
+        Value         "26"
+        Show          off
+      }
+      Parameter {
+        Variable      "type"
+        Value         "2"
+        Show          off
+      }
+      Parameter {
+        Variable      "fc"
+        Value         "30000"
+        Show          off
+      }
+      Parameter {
+        Variable      "shft_pu"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "limits"
+        Value         "[0 1]"
+        Show          off
+      }
+      Parameter {
+        Variable      "delay_sec"
+        Value         "1e-6"
+        Show          off
+      }
+      Parameter {
+        Variable      "polar"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "update"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "sync"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "behavior"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "safe_state"
+        Value         "0"
+        Show          off
+      }
+      Parameter {
+        Variable      "pspUnit"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "active_polarity"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "TargetPortIndices"
+        Value         "5"
+        Show          off
+      }
+      Terminal {
+        Type          Input
+        Position      [-25, 0]
+        Direction     left
+      }
+    }
+    Component {
+      Type          Product
+      Name          "Divide"
+      Show          off
+      Position      [915, 385]
+      Direction     up
+      Flipped       off
+      Parameter {
+        Variable      "IconShape"
+        Value         "1"
+        Show          off
+      }
+      Parameter {
+        Variable      "Inputs"
+        Value         "2"
+        Show          off
+      }
+      Parameter {
+        Variable      "DataType"
+        Value         "10"
+        Show          off
+      }
+    }
+    Component {
+      Type          Constant
+      Name          "Teisendus konst."
+      Show          on
+      Position      [825, 360]
+      Direction     right
+      Flipped       off
+      Frame         [-10, -10; 10, 10]
+      LabelPosition [0, 13]
+      LabelAlign    up
+      Parameter {
+        Variable      "Value"
+        Value         "0.01"
+        Show          off
+      }
+      Parameter {
+        Variable      "DataType"
+        Value         "10"
+        Show          off
+      }
+    }
+    Component {
+      Type          Scope
+      Name          base64 "VsOkbGp1bmRwaW5nZQ=="
+      Show          on
+      Position      [960, 445]
+      Direction     up
+      Flipped       off
+      Location      [240, 155; 1680, 882]
+      State         "AAAA/wAAAAD9AAAAAgAAAAEAAAAAAAAAAPwCAAAAA/sAAAAQAFoAbwBvA"
+"G0AQQByAGUAYQAAAAAA/////wAAADEA////+wAAABQAUwBhAHYAZQBkAFYAaQBlAHcAcwAAAAAA//"
+"///wAAAGMA////+wAAAAwAVAByAGEAYwBlAHMAAAAAAP////8AAABjAP///wAAAAMAAAAAAAAAAPw"
+"BAAAAAfsAAAAUAEQAYQB0AGEAVwBpAGQAZwBlAHQAAAAAAP////8AAABEAP///wAABaAAAAK4AAAA"
+"BAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAEAAAAOAFQAbwBvAGwAQgBhAHIBAAAAAP////8AAAAAA"
+"AAAAA=="
+      SavedViews    "AAAAAgAAAAA="
+      HeaderState   "AAAA/wAAAAAAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAL/gMAAAAJAAAAC"
+"QAAAGQAAAAGAAAAZAAAAAcAAABkAAAABAAAAGQAAAAFAAAAZAAAAAIAAABkAAAAAwAAAGQAAAABAA"
+"AAZAAAAAgAAABkAAAAzAAAAAsBAAABAAAAAAAAAAAAAAAAZP////8AAACBAAAAAAAAAAsAAACpAAA"
+"AAQAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAA"
+"AAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAA"
+"AAjAAAAAQAAAAAAAAPoAAAAACM="
+      PlotPalettes  "AAAAAQAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      Axes          "1"
+      TimeRange     "0"
+      ScrollingMode "2"
+      SingleTimeAxis "1"
+      Open          "0"
+      Ts            "-1"
+      SampleLimit   "0"
+      XAxisLabel    "Aeg [s]"
+      ShowLegend    "1"
+      Axis {
+        Name          base64 "TXV1bmR1cmkgdsOkbGp1bmRwaW5nZSBrb29ybXVzdGFraXN0"
+"aWw="
+        AutoScale     1
+        MinValue      0
+        MaxValue      1
+        Signals       {}
+        SignalTypes   [ ]
+        AxisLabel     base64 "VsOkbGp1bmRwaW5nZSBbbVZd"
+        Untangle      0
+        KeepBaseline  off
+        BaselineValue 0
+      }
+      Fourier {
+        SingleXAxis       on
+        AxisLabel         "Frequency"
+        Scaling           0
+        PhaseDisplay      0
+        ShowFourierLegend off
+        Axis {
+          Name          ""
+          AutoScale     1
+          MinValue      0
+          MaxValue      1
+          Signals       {}
+          Untangle      0
+          KeepBaseline  off
+          BaselineValue 0
+        }
+      }
+    }
+    Component {
+      Type          Saturation
+      Name          "Saturatsioon"
+      Show          on
+      Position      [975, 385]
+      Direction     right
+      Flipped       off
+      Parameter {
+        Variable      "UpperLimit"
+        Value         "0.8"
+        Show          off
+      }
+      Parameter {
+        Variable      "LowerLimit"
+        Value         "0"
+        Show          off
+      }
+    }
+    Component {
+      Type          DataType
+      Name          base64 "QW5kbWV0w7zDvHA="
+      Show          on
+      Position      [510, 385]
+      Direction     right
+      Flipped       off
+      Parameter {
+        Variable      "DataType"
+        Value         "4"
+        Show          off
+      }
+    }
+    Component {
+      Type          Reference
+      SrcComponent  "Components/Control/Filters/Periodic Average"
+      Name          base64 "S2Vza3bDpMOkcnR1cw=="
+      Show          on
+      Position      [820, 475]
+      Direction     up
+      Flipped       off
+      Frame         [-15, -15; 15, 15]
+      LabelPosition [0, 18]
+      LabelAlign    up
+      Parameter {
+        Variable      "T_average"
+        Value         "1"
+        Show          off
+      }
+      Terminal {
+        Type          Output
+        Position      [19, 0]
+        Direction     right
+      }
+      Terminal {
+        Type          Input
+        Position      [-15, 0]
+        Direction     left
+      }
+    }
+    Component {
+      Type          Constant
+      Name          "ASCII \"V\""
+      Show          on
+      Position      [580, 455]
+      Direction     right
+      Flipped       off
+      Frame         [-10, -10; 10, 10]
+      LabelPosition [0, 13]
+      LabelAlign    up
+      Parameter {
+        Variable      "Value"
+        Value         "86"
+        Show          off
+      }
+      Parameter {
+        Variable      "DataType"
+        Value         "4"
+        Show          off
+      }
+    }
+    Component {
+      Type          SignalMux
+      Name          "Mux1"
+      Show          off
+      Position      [910, 445]
+      Direction     right
+      Flipped       off
+      Parameter {
+        Variable      "Width"
+        Value         "2"
+        Show          off
+      }
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  base64 "U8O1bnVtaSBwaWtrdXM="
+      SrcTerminal   1
+      Points        [625, 305; 625, 365]
+      DstComponent  "Mux"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Mux"
+      SrcTerminal   1
+      DstComponent  "SPI Slave"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "SPI Slave"
+      SrcTerminal   2
+      DstComponent  "Demux"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Teisendus konst."
+      SrcTerminal   1
+      Points        [875, 360; 875, 380]
+      DstComponent  "Divide"
+      DstTerminal   2
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Divide"
+      SrcTerminal   1
+      DstComponent  "Saturatsioon"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  base64 "QW5kbWV0w7zDvHA="
+      SrcTerminal   2
+      DstComponent  "Mux"
+      DstTerminal   4
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "ASCII \"U\""
+      SrcTerminal   1
+      Points        [620, 350; 620, 375]
+      DstComponent  "Mux"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "ASCII \"m\""
+      SrcTerminal   1
+      Points        [610, 410; 610, 395]
+      DstComponent  "Mux"
+      DstTerminal   5
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "ASCII \"V\""
+      SrcTerminal   1
+      Points        [615, 455; 615, 405]
+      DstComponent  "Mux"
+      DstTerminal   6
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Demux"
+      SrcTerminal   6
+      Points        [835, 405; 835, 395; 885, 395; 885, 390]
+      DstComponent  "Divide"
+      DstTerminal   3
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Saturatsioon"
+      SrcTerminal   2
+      DstComponent  base64 "UFdNIHbDpGxqdW5k"
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Mux1"
+      SrcTerminal   1
+      DstComponent  base64 "VsOkbGp1bmRwaW5nZQ=="
+      DstTerminal   1
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  "Pinge analoogsisend"
+      SrcTerminal   1
+      Points        [765, 475]
+      Branch {
+        DstComponent  base64 "S2Vza3bDpMOkcnR1cw=="
+        DstTerminal   2
+      }
+      Branch {
+        Points        [765, 440]
+        DstComponent  "Mux1"
+        DstTerminal   2
+      }
+    }
+    Connection {
+      Type          Signal
+      SrcComponent  base64 "S2Vza3bDpMOkcnR1cw=="
+      SrcTerminal   1
+      Points        [860, 475]
+      Branch {
+        Points        [885, 475; 885, 550; 460, 550; 460, 385]
+        DstComponent  base64 "QW5kbWV0w7zDvHA="
+        DstTerminal   1
+      }
+      Branch {
+        Points        [860, 450]
+        DstComponent  "Mux1"
+        DstTerminal   3
+      }
+    }
+  }
+}
+DemoSignature "ETaEs4LY3nm5vVI/Hx/qyNmVLlXNcjvsiR6f/6tM1r4="
